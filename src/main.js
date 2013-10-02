@@ -104,20 +104,74 @@
 // $('body').append(dressTwo.el);
 
 //6
-var buttonTemplateHtml = $('#templates .button').html();
-var buttonTemplate = _.template(buttonTemplateHtml);
+// var buttonTemplateHtml = $('#templates .button').html();
+// var buttonTemplate = _.template(buttonTemplateHtml);
 
 
-var ButtonView = Backbone.View.extend({
+// var ButtonView = Backbone.View.extend({
+
+//   render: function () {
+//     var newButtonHtml = buttonTemplate({ buttonText: 'backbone iz coo' });
+//     $(this.el).html(newButtonHtml);
+//   }
+// });
+
+// btn = new ButtonView({
+// 	el: $('.display')
+// });
+// btn.render();
+//7 
+
+// var profileTemplate = _.template('<%= name %> (Age: <%= age %>)');
+
+// var ProfileView = Backbone.View.extend({
+//   initialize: function (options) {
+//     name = options.name;
+//     age = options.age;
+//   },
+
+//   render: function () {
+//       $('body').append(profileTemplate) 
+//   }
+
+// })
+
+// var profileView = new ProfileView({
+//   name: 'Bob',
+//   age: 45
+// });
+
+// profileView.render();
+
+//8 
+
+var dressTemplateHtml = $('#templates .dress').html();
+var dressTemplate = _.template(dressTemplateHtml);
+
+var DressView = Backbone.View.extend({
+
+  events: {
+    'click button.buy': 'purchase'
+  },
+
+  initialize: function (options) {
+    this.color = options.color;
+    this.price = options.price;
+  },
 
   render: function () {
-    var newButtonHtml = buttonTemplate({ buttonText: 'backbone iz coo' });
-    $(this.el).html(newButtonHtml);
+    var newDressHtml = dressTemplate({ color: this.color, price: this.price });
+    $(this.el).html(newDressHtml);
+  },
+
+  purchase: function () {
+    alert('You bought it for $' + this.price);
   }
 });
 
-btn = new ButtonView({
-	el: $('.display')
+var dressOnSaleYo = new DressView({
+  color: 'burnt orange',
+  price: 59.99
 });
-btn.render();
-
+dressOnSaleYo.render();
+$('body').append(dressOnSaleYo.el);
