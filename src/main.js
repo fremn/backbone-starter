@@ -145,33 +145,73 @@
 
 //8 
 
-var dressTemplateHtml = $('#templates .dress').html();
-var dressTemplate = _.template(dressTemplateHtml);
+// var dressTemplateHtml = $('#templates .dress').html();
+// var dressTemplate = _.template(dressTemplateHtml);
 
-var DressView = Backbone.View.extend({
+// var DressView = Backbone.View.extend({
 
-  events: {
-    'click button.buy': 'purchase'
-  },
+//   events: {
+//     'click button.buy': 'purchase'
+//   },
 
+//   initialize: function (options) {
+//     this.color = options.color;
+//     this.price = options.price;
+//   },
+
+//   render: function () {
+//     var newDressHtml = dressTemplate({ color: this.color, price: this.price });
+//     $(this.el).html(newDressHtml);
+//   },
+
+//   purchase: function () {
+//     alert('You bought it for $' + this.price);
+//   }
+// });
+
+// var dressOnSaleYo = new DressView({
+//   color: 'burnt orange',
+//   price: 59.99
+// });
+// dressOnSaleYo.render();
+// $('body').append(dressOnSaleYo.el);
+
+//9
+
+var pingServer = _.extend({}, Backbone.Events);
+
+var StudentView = Backbone.View.extend({
   initialize: function (options) {
-    this.color = options.color;
-    this.price = options.price;
+    this.name = options.name;
   },
 
-  render: function () {
-    var newDressHtml = dressTemplate({ color: this.color, price: this.price });
-    $(this.el).html(newDressHtml);
-  },
-
-  purchase: function () {
-    alert('You bought it for $' + this.price);
+  ping: function () {
+    pingServer.trigger('ring', this.name);
   }
 });
 
-var dressOnSaleYo = new DressView({
-  color: 'burnt orange',
-  price: 59.99
+var InstructorView = Backbone.View.extend({
+  totalPings: 0,
+
+  initialize: function (options) {
+    this.listenTo(pingServer, 'ring', this.recordPop);
+  },
+
+  recordPop: function (name) {
+    this.totalPings += 1;
+  }
 });
-dressOnSaleYo.render();
-$('body').append(dressOnSaleYo.el);
+
+var alice = new StudentView({ name: 'Alice' });
+var bob = new StudentView({ name: 'Bob' });
+var instructor = new InstructorView({ name: 'Dr. Professor' });
+
+alice.ping();
+alice.ping();
+console.log('Instructor should have 2 pings:', instructor.totalPings);
+bob.ping();
+bob.ping();
+bob.ping();
+bob.ping();
+bob.ping();
+console.log('Instructor should have 7 pings:', instructor.totalPings);
