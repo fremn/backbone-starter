@@ -315,13 +315,12 @@
 //         if (this.get('hp') < 0 ){
 //             this.set({hp: 0});
 //         }
-
 //     },
 //     break: function(){
 //         if (this.get('hp') === 0){
 //             console.log("A #{size}\" board breaks!");
 //         }else{
-//             console.log("Still alive (HP: " + this.get('hp'));
+//             console.log("Still alive (HP:" + this.get('hp'));
 //         }
 //     }
 // });
@@ -343,37 +342,79 @@
 
 //Views listen to Models
 
+// var Stock = Backbone.Model.extend({
+//   raise: function (amount) {
+//     price = this.get('price');
+//     this.set({price: price + amount});  // this line is wrong; fix it
+//   }
+// });
+
+// var StockView = Backbone.View.extend({
+//   initialize: function (options) {
+//     this.listenTo(this.model, 'change:price', this.onPriceChange);
+//   },
+
+//   onPriceChange: function (model) {
+//     console.log('New price for', this.model.get('name'), this.model.get('price'));
+//     this.render();
+//   },
+
+//   render: function () {
+//     // render stuff
+//     console.log('Rendering', this.model.get('name'));
+//   }
+// });
+
+// var stock = new Stock({
+//   name: 'AAPL',
+//   price: 480
+// });
+
+// var stockView = new StockView({
+//   model: stock
+// });
+
+// // Raising the price causes the view to re-render
+// stock.raise(0.5);
+
+
+// ex 4
+
 var Stock = Backbone.Model.extend({
-  raise: function (amount) {
-    price = this.get('price');
-    this.set({price: price + amount});  // this line is wrong; fix it
-  }
+    change: function (amount) {
+        price = this.get('price');
+        this.set({price: price + amount});
+    }
 });
+
 
 var StockView = Backbone.View.extend({
-  initialize: function (options) {
-    this.listenTo(this.model, 'change:price', this.onPriceChange);
-  },
-
-  onPriceChange: function (model) {
-    console.log('New price for', this.model.get('name'), this.model.get('price'));
-    this.render();
-  },
-
-  render: function () {
-    // render stuff
-    console.log('Rendering', this.model.get('name'));
-  }
+    initialize: function () {
+        // this.name = options.name;
+        // this.price = options.price;
+        this.listenTo(this.model, 'change:price', this.render);
+    },
+    render : function (){
+        $(this.el).html('<p> STOCK: ' + this.model.get('name') + '</p> <p> price:' + this.model.get('price') );
+    }
 });
 
+// below is given
 var stock = new Stock({
-  name: 'AAPL',
-  price: 480
+  name: 'YHOO',
+  price: 34.03
 });
+var stockView = new StockView({ model: stock });
 
-var stockView = new StockView({
-  model: stock
-});
+// Render and add to page
+stockView.render();
+$('.stocks').append(stockView.el);
 
-// Raising the price causes the view to re-render
-stock.raise(0.5);
+// Perform an update every two seconds
+var updateLoop = function () {
+  var priceChangeAmount = Math.round(Math.random() * 300 - 150) / 100;
+  stock.change(priceChangeAmount);
+
+  setTimeout(updateLoop, 2000);
+};
+updateLoop();
